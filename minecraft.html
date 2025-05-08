@@ -1,14 +1,72 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>Міні-Майнкрафт</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Міні-Майнкрафт / Mini Minecraft</title>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+    #instructions {
+      position: absolute; top: 10px; left: 10px; z-index: 10; color: white;
+      background: rgba(0, 0, 0, 0.5); padding: 10px; border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Міні-Майнкрафт (демо)</h1>
-  <p>Рухайся і став блоки. (Проста версія в пікселях)</p>
-  <canvas id="gameCanvas" width="400" height="400" style="background: #a3d9a5;"></canvas>
-  <script src="../js/minecraft.js"></script>
+  <div id="instructions">Клікни, щоб поставити/зняти блок. WASD — рухайся. Click to build/break.</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    let raycaster = new THREE.Raycaster();
+    let mouse = new THREE.Vector2();
+    const controls = { forward: false, backward: false, left: false, right: false };
+    for (let x = -5; x <= 5; x++) {
+      for (let z = -5; z <= 5; z++) {
+        let block = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0x228B22 }));
+        block.position.set(x, 0, z);
+        scene.add(block);
+      }
+    }
+    let blocks = [];
+    function addBlock(pos) {
+      let block = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0x8B4513 }));
+      block.position.copy(pos);
+      scene.add(block);
+      blocks.push(block);
+    }
+    function removeBlock(block) {
+      scene.remove(block);
+      blocks = blocks.filter(b => b !== block);
+    }
+    window.addEventListener('click', (event) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      let intersects = raycaster.intersectObjects(scene.children, false);
+      if (intersects.length > 0) {
+        let hit = intersects[0];
+        if (hit.object.geometry.type === "BoxGeometry") {
+          if (event.shiftKey) {
+            removeBlock(hit.object);
+          } else {
+            let pos = hit.point.clone().add(hit.face.normal).floor().addScalar(0.5);
+            addBlock(pos);
+          }
+        }
+      }
+    });
+    camera.position.set(0, 5, 10);
+    camera.lookAt(0, 0, 0);
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
 </body>
 </html>
