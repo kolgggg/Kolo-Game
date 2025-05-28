@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head><meta charset="UTF-8"><title>Виживання: Зомбі</title></head>
+<body style="background:#111;color:#fff;text-align:center;">
+  <h1>Виживання: Зомбі (демо)</h1>
+  <p>Ходи стрілками, уникай зомбі!</p>
+  <canvas id="zombieGame" width="600" height="400" style="background:#333;"></canvas>
+  <script>
+    const c = document.getElementById("zombieGame"), ctx = c.getContext("2d");
+    let px = 50, py = 50, zx = 300, zy = 200;
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp") py -= 5;
+      if (e.key === "ArrowDown") py += 5;
+      if (e.key === "ArrowLeft") px -= 5;
+      if (e.key === "ArrowRight") px += 5;
+      draw();
+    });
+
+    function draw() {
+      ctx.clearRect(0,0,c.width,c.height);
+      ctx.fillStyle = "white"; ctx.fillRect(px, py, 20, 20);
+      ctx.fillStyle = "green"; ctx.fillRect(zx, zy, 20, 20);
+      ctx.fillStyle = "red";
+      if (Math.abs(px - zx) < 20 && Math.abs(py - zy) < 20) {
+        ctx.fillText("Тебе зловив зомбі!", 200, 200);
+      }
+    }
+    draw();
+  </script>
+</body>
+</html>

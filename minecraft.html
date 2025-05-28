@@ -1,1 +1,35 @@
-<html><head><meta charset='utf-8'><title>Майнкрафт</title></head><body><h1>Майнкрафт гра завантажується...</h1></body></html>
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Міні-Майнкрафт</title>
+  <style>
+    canvas { display: block; margin: 0 auto; background: #87ceeb; }
+  </style>
+</head>
+<body>
+  <h1 style="text-align:center;">Міні-Майнкрафт</h1>
+  <canvas id="world" width="800" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("world");
+    const ctx = canvas.getContext("2d");
+    const blocks = [];
+
+    canvas.addEventListener("click", e => {
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.floor((e.clientX - rect.left) / 40) * 40;
+      const y = Math.floor((e.clientY - rect.top) / 40) * 40;
+      blocks.push({x, y});
+      draw();
+    });
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#654321";
+      for (let b of blocks) ctx.fillRect(b.x, b.y, 40, 40);
+    }
+    draw();
+  </script>
+</body>
+</html>

@@ -1,1 +1,63 @@
-<html><head><meta charset='utf-8'><title>Скуф</title></head><body><h1>Скуф гра завантажується...</h1></body></html>
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Скуф і мотоцикли</title>
+  <style>
+    body { margin: 0; background: black; color: white; text-align: center; }
+    canvas { background: #222; display: block; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <h1>Скуф і мотоцикли</h1>
+  <canvas id="game" width="800" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    let x = 100, y = 300, coins = 0;
+
+    const keys = {};
+    document.addEventListener("keydown", e => keys[e.key] = true);
+    document.addEventListener("keyup", e => keys[e.key] = false);
+
+    const obstacles = [{x: 600, y: 300, w: 50, h: 50}];
+    const coin = {x: 400, y: 250, w: 20, h: 20};
+
+    function loop() {
+      if (keys["ArrowUp"]) y -= 3;
+      if (keys["ArrowDown"]) y += 3;
+      if (keys["ArrowRight"]) x += 3;
+      if (keys["ArrowLeft"]) x -= 3;
+
+      // Collision with coin
+      if (x < coin.x + coin.w && x + 30 > coin.x && y < coin.y + coin.h && y + 30 > coin.y) {
+        coins++;
+        coin.x = Math.random() * 750;
+        coin.y = Math.random() * 370;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "blue";
+      ctx.fillRect(x, y, 30, 30);
+      ctx.fillStyle = "gold";
+      ctx.fillRect(coin.x, coin.y, coin.w, coin.h);
+
+      ctx.fillStyle = "red";
+      for (let o of obstacles) {
+        ctx.fillRect(o.x, o.y, o.w, o.h);
+        if (x < o.x + o.w && x + 30 > o.x && y < o.y + o.h && y + 30 > o.y) {
+          // hit obstacle
+          ctx.fillStyle = "white";
+          ctx.fillText("Врізався! 50 монет або вихід", 250, 100);
+        }
+      }
+
+      ctx.fillStyle = "white";
+      ctx.fillText("Монети: " + coins, 10, 20);
+      requestAnimationFrame(loop);
+    }
+    loop();
+  </script>
+</body>
+</html>
